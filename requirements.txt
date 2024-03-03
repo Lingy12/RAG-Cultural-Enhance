@@ -1,0 +1,16 @@
+chromadb
+scikit-learn
+langchain
+torch
+transformers
+peft
+bitsandbytes
+sentencepiece
+fire
+rouge-score
+datasets
+tiger-eval
+protobuf
+wikiextractor
+jq
+sentence-transformers
