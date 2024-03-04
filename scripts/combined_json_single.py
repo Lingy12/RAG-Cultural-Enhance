@@ -7,11 +7,10 @@ from tqdm import tqdm
 import fire
 from langchain.document_loaders.json_loader import JSONLoader
 from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
-from typing import Iterable
+from typing import Iterable, List
 
 logger = get_logger(__name__)
 
-filter_words = ['singapore', 'united state', 'u.s.', 'philippines']
 def save_docs_to_jsonl(array:Iterable[Document], file_path:str)->None:
     with open(file_path, 'w') as jsonl_file:
         for doc in tqdm(array):
@@ -23,15 +22,12 @@ def contains_any(s, words):
 def to_doc(text):
     return Document(page_content=text)
 
-def combine_json(data_dir, name='wiki_filtered', need_filter=True):
+def combine_json(data_dir, name, filter_words: List[str]):
     
     if not os.path.exists('./processed_data'):
         os.makedirs('./processed_data', exist_ok=True)
 
     doc_lst = []
-    sg_lst = []
-    us_lst = []
-    ph_list = []
 
     raw_lst = glob(f'{data_dir}/**/*')
     text_splitter = RecursiveCharacterTextSplitter(
@@ -49,7 +45,7 @@ def combine_json(data_dir, name='wiki_filtered', need_filter=True):
         for line in lines:
             data = json.loads(line)
             
-            if not contains_any(data['text'].lower(), filter_words) and need_filter:
+            if not contains_any(data['text'].lower(), filter_words):
                 continue
             
 

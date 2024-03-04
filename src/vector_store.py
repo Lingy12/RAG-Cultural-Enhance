@@ -1,5 +1,7 @@
 import os
+import os
 import shutil
+from tqdm import tqdm
 from langchain_community.vectorstores import Chroma
 from langchain_community.retrievers import TFIDFRetriever
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
@@ -91,7 +93,8 @@ class EmbeddingStore(BaseVectorStore):
         # tfidf_matrix = self.vectorizer.fit_transform(docs)
         if self.allow_build:
             logger.info('Building vector stores with {} documents'.format(len(docs)))
-            self.vectorstore = Chroma.from_documents(docs, self.embedding_function, persist_directory=self.saved_vs)
+            for doc in tqdm(docs):
+                self.vectorstore = Chroma.from_documents([doc], self.embedding_function, persist_directory=self.saved_vs)
             logger.info('Vector store built at {}'.format(self.saved_vs))
         else:
             raise Exception('Should not build a new vector store.')

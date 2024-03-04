@@ -37,7 +37,7 @@ def build_vector_store(json_file, model_name):
     logger.info('Data loaded in {}s'.format(time.time() - start))
     
     logger.info(model_name)
-    save_name = str(Path(os.path.basename(json_file)).with_suffix('')) + '_' + model_name
+    save_name = str(Path(os.path.basename(json_file)).with_suffix('')) + '_' + str(os.path.basename(model_name))
     embedding_store = EmbeddingStore(top_k=20, model_name=model_name, saved_vs=os.path.join('./vector_store', save_name))
     logger.info('Vector store initialized.')
     
