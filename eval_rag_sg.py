@@ -46,4 +46,4 @@ for dataset in datasets:
         print('Vector store loaded.')
 
         rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrival_threshold, verbose=1)
-        eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', model_name=str(Path(os.path.basename(datasets[dataset])).with_suffix('')) + '_' + str(retrival_threshold) + str(top_k))
+        eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', model_name=str(Path(os.path.basename(datasets[dataset])).with_suffix('')) + '_' + str(retrival_threshold) + '_' + str(top_k))
