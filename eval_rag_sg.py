@@ -23,6 +23,7 @@ model_path = '/home/shared_LLMs/gemma-2b-it/'
 prompt = './prompt/prompt_eval.txt'
 vector_store = os.path.normpath(sys.argv[1])
 retrival_threshold = float(sys.argv[2])
+top_k = int(sys.argv[3])
 
 # Build the TF-IDF vector store
 # start_time = time.time()
@@ -41,8 +42,8 @@ num_prompt = 1
 for dataset in datasets:
     for i in range(1, num_prompt + 1):
         print('Loading vector store...')
-        vs = TfidfStore(top_k=5,saved_vs=datasets[dataset])
+        vs = TfidfStore(top_k=top_k,saved_vs=datasets[dataset])
         print('Vector store loaded.')
 
         rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrival_threshold, verbose=1)
-        eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', model_name=str(Path(os.path.basename(datasets[dataset])).with_suffix('')) + '_' + str(retrival_threshold))
+        eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', model_name=str(Path(os.path.basename(datasets[dataset])).with_suffix('')) + '_' + str(retrival_threshold) + str(top_k))

@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from vector_store import BaseVectorStore
+import re
 from logger_config import get_logger
 import torch
 import logging
@@ -23,9 +24,16 @@ class RAG:
             self.prompt_template = f.read()
 
     def generate(self, query, max_new_tokens=128, show_ori=False):
-
+        pattern = r"Question:\n(.*?)\n\nChoices:"
+        match = re.search(pattern, query, re.I) # check seaeval prompt, query question only
+        # logger.info(match.group(1))
+        if match:
         # Step 1: retrival
-        query_result = self.vector_store.query(query)
+            query_result = self.vector_store.query(match.group(1).strip())
+            logger.info('Running seaeval, extract the question only..')
+            logger.info('Question: ' + match.group(1).strip())
+        else:
+            query_result = self.vector_store.query(query)
         
         # can add logic to filter
         logger.info('Retrieval result:')
