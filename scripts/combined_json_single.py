@@ -11,19 +11,33 @@ from typing import Iterable, List
 
 logger = get_logger(__name__)
 
+target_words = ['singapore', 'united state','u.s.', 'philippines']
 def save_docs_to_jsonl(array:Iterable[Document], file_path:str)->None:
     with open(file_path, 'w') as jsonl_file:
         for doc in tqdm(array):
             jsonl_file.write(doc.json() + '\n')
 
-def contains_any(s, words):
-    return any(word in s for word in words)
+def check_filter(s, words, exclude):
+    exclude_words = set(target_words) - set(words)
+    
+    for word in target_words:
+        in_s = word in s
+        if word in exclude_words and exclude and in_s: # should remove if exclude words in doc and exclude is triggered.
+            return False
+        if word in words and not in_s: # should remove if the target word not in doc
+            return False
+        if word in words and in_s: # checking next word
+            continue
+
+    return True
+
 
 def to_doc(text):
     return Document(page_content=text)
 
-def combine_json(data_dir, name, filter_words: List[str]):
-    
+def combine_json(data_dir, name, filter_words: List[str], exclude=False):
+    logger.info(filter_words)
+    logger.info(exclude)
     if not os.path.exists('./processed_data'):
         os.makedirs('./processed_data', exist_ok=True)
 
@@ -45,7 +59,7 @@ def combine_json(data_dir, name, filter_words: List[str]):
         for line in lines:
             data = json.loads(line)
             
-            if not contains_any(data['text'].lower(), filter_words):
+            if not check_filter(data['text'].lower(), filter_words, exclude):
                 continue
             
 

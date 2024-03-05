@@ -4,7 +4,7 @@ import sys
 def get_logger(name):
     # Create a logger object
     logger = logging.getLogger(name)
-
+    logger.propagate = False
     # Set the logging level
     logger.setLevel(logging.DEBUG)
 

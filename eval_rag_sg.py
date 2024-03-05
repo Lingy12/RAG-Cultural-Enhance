@@ -21,8 +21,8 @@ def to_doc(text):
 make_deterministic(0)
 model_path = '/home/shared_LLMs/gemma-2b-it/'
 prompt = './prompt/prompt_eval.txt'
-# vector_store = os.path.normpath(sys.argv[1])
-retrival_threshold = float(sys.argv[1])
+vector_store = os.path.normpath(sys.argv[1])
+retrival_threshold = float(sys.argv[2])
 
 # Build the TF-IDF vector store
 # start_time = time.time()
@@ -32,7 +32,7 @@ retrival_threshold = float(sys.argv[1])
 # end_time = time.time()
 
 
-datasets = {'sg_eval': './vector_store/wiki_sg_exclusive_2_2_None_1_0.01_True.pkl'}
+datasets = {'sg_eval': f'./vector_store/{vector_store}'}
             # 'us_eval': './vector_store/wiki_us_ex_filtered_1_1_None_1_1.0_True.pkl', 
             # 'ph_eval': './vector_store/wiki_ph_exclusive_1_1_None_1_1.0_True.pkl'}
 # eval_lang = ['English']

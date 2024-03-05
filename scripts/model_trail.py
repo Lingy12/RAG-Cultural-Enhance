@@ -12,7 +12,8 @@ def to_doc(text):
 model_path = '/home/shared_LLMs/gemma-2b-it'
 prompt = sys.argv[1]
 vector_store = sys.argv[2]
-top_k = sys.argv[3]
+top_k = int(sys.argv[3])
+threshold = float(sys.argv[4])
 
 # Build the TF-IDF vector store
 start_time = time.time()
@@ -25,9 +26,9 @@ end_time = time.time()
 
 print(f"Loading time is : {end_time - start_time} seconds")
 
-rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, device='cuda', verbose=0, retrieval_threshold=0.1)
+rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, device='cuda', verbose=0, retrieval_threshold=threshold)
 
 while True:
     query = input('Enter the query:')
     answer = rag_model.generate(query, show_ori=False, max_new_tokens=64)
-    print('Model Response: ' + answer[0])
+    # print('Model Response: ' + answer[0])

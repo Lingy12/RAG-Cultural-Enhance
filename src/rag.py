@@ -60,7 +60,8 @@ class RAG:
         
         outputs = outputs[:,input_ids.input_ids.shape[-1]:] # mask input
         outputs = self.tokenizer.batch_decode(outputs)
-        
+        if len(retrival_string) > 0:
+            outputs[0] += '[RAG]'
         logger.info('model answer: ' + outputs[0])
         return outputs
 

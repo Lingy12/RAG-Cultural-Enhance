@@ -24,13 +24,16 @@ from tqdm import trange
 from dataset import Dataset
 from model   import Model
 from rag import RAG
+from logger_config import get_logger
+
+logger = get_logger(__name__)
 # =  =  =  =  =  =  =  =  =  =  =  Logging Setup  =  =  =  =  =  =  =  =  =  =  =  =  = 
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-    format  = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    datefmt = "%m/%d/%Y %H:%M:%S",
-    level   = logging.INFO,
-)
+# logger = logging.getLogger(__name__)
+# logging.basicConfig(
+    # format  = "%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    # datefmt = "%m/%d/%Y %H:%M:%S",
+    # level   = logging.INFO,
+# )
 # =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = 
 
 # assume batch size is 1
@@ -87,6 +90,7 @@ def do_model_prediction(dataset, model):
     for i in trange(0, len(dataset.data_plain), leave=False):
         inputs  = dataset.data_plain[i]
         outputs = model.generate(inputs)
+        print(outputs)
         model_predictions.extend(outputs)
     return model_predictions
 
