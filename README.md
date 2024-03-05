@@ -15,6 +15,34 @@ pip install -r requirements.txt
 conda activate rag
 ```
 
+## Reproducibility
+
+We know that the sampling could help to boost the generation result from LLM, however, to have a fair comparasion and consistent result, we disable the sampling for model generation and set determinitic for CUDA and transformers package. 
+
+```json
+## Generation config
+{
+  "_from_model_config": true,
+  "bos_token_id": 2,
+  "eos_token_id": 1,
+  "pad_token_id": 0,
+  "transformers_version": "4.38.0.dev0"
+}
+```
+
+```python
+from transformers import set_seed
+import torch
+
+def make_deterministic(seed):
+    set_seed(seed)
+    # torch.use_deterministic_algorithms(True)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
+make_deterministic(0)
+```
+
 ## Download and extract wikipedia data
 
 ```bash
