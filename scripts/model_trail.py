@@ -4,19 +4,20 @@ import time
 from langchain_core.documents import Document
 from evaluate import eval_rag
 import transformers
-
+import sys
 transformers.set_seed(43)
 def to_doc(text):
     return Document(page_content=text)
 
 model_path = '/home/shared_LLMs/gemma-2b-it'
-prompt = './prompt/prompt_test.txt'
-vector_store = './vector_store/wiki_filter_test_1_1_None_1_50000_True.pkl'
+prompt = sys.argv[1]
+vector_store = sys.argv[2]
+top_k = sys.argv[3]
 
 # Build the TF-IDF vector store
 start_time = time.time()
 print('Loading vector store...')
-vs = TfidfStore(top_k=5,saved_vs=vector_store)
+vs = TfidfStore(top_k=top_k,saved_vs=vector_store)
 print('Vector store loaded.')
 end_time = time.time()
 # vs.build_vectorstore(random_docs)
