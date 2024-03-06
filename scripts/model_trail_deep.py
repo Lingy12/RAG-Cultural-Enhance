@@ -9,12 +9,12 @@ def to_doc(text):
 
 model_path = '/home/shared_LLMs/gemma-2b-it/'
 prompt = './prompt/prompt_test.txt'
-vector_store = './vector_store/wiki_test_all-MiniLM-L6-v2'
+vector_store = './vector_store/wiki_filter_country_bge-large-en-v1.5'
 
 # Build the TF-IDF vector store
 start_time = time.time()
 print('Loading vector store...')
-vs = EmbeddingStore(top_k=2,saved_vs=vector_store, model_name='all-MiniLM-L6-v2')
+vs = EmbeddingStore(top_k=2,saved_vs=vector_store, model_name='BAAI/bge-large-en-v1.5')
 print('Vector store loaded.')
 end_time = time.time()
 # vs.build_vectorstore(random_docs)
