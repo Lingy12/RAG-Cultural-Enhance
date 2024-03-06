@@ -14,3 +14,4 @@ protobuf
 wikiextractor
 jq
 sentence-transformers
+rank_bm25
