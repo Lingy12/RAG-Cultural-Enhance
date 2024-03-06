@@ -45,5 +45,7 @@ for dataset in datasets:
         vs = TfidfStore(top_k=top_k,saved_vs=datasets[dataset])
         print('Vector store loaded.')
 
-        rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrival_threshold, verbose=1)
+        rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrival_threshold, verbose=1, device='cuda')
         eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', model_name=str(Path(os.path.basename(datasets[dataset])).with_suffix('')) + '_' + str(retrival_threshold) + '_' + str(top_k))
+        vs.close_cache()
+    

@@ -55,6 +55,7 @@ class TfidfStore(BaseVectorStore):
             # cache the query
             os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)  # Ensure cache directory exists
             self.cache = shelve.open(self.cache_path, writeback=True)
+            logger.info('Number of cache entry: ' + str(len(self.cache)))
         else:
             self.is_load_from_local = False
 
@@ -70,9 +71,13 @@ class TfidfStore(BaseVectorStore):
         self.vectorstore.save_local(folder_path=path)
     
     def query(self, query_str):
+        if len(self.cache) >= 200:
+            logger.warning('Poping cache.')
+            self.cache.pop(list(self.cache.keys())[0])
         if query_str in self.cache:
+            # logger.info('Cache hit')
             return self.cache[query_str][:self.top_k]
-
+        # logger.warning('Cache miss.')
         results = self.vectorstore.get_relevant_documents(query_str)
         self.cache[query_str] = results
         return results[:self.top_k]
