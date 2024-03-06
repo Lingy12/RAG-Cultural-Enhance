@@ -21,7 +21,7 @@ def to_doc(text):
 
 make_deterministic(0)
 
-def evaluate(model_path, prompt, vector_store, retrieval_threshold, top_k, eval_data, eval_mode, embed_name=None, verbose=1):
+def evaluate(model_path, prompt, vector_store, retrieval_threshold, top_k, eval_data, eval_mode, embed_name=None, verbose=1, device='cuda'):
     # model_path = '/home/shared_LLMs/gemma-2b-it/'
     # prompt = './prompt/prompt_eval.txt'
     # vector_store = os.path.normpath(sys.argv[1])
@@ -59,7 +59,7 @@ def evaluate(model_path, prompt, vector_store, retrieval_threshold, top_k, eval_
                 raise Exception("Not a valid Eval mode. Choose ['embed', 'tfidf']")
             logger.info('Vector store loaded.')
 
-            rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrieval_threshold, verbose=verbose, device='cuda')
+            rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, retrieval_threshold=retrieval_threshold, verbose=verbose, device=device)
             eval_rag(rag=rag_model, dataset_name=dataset, prompt_index=i, eval_lang=['English'], eval_mode='zero_shot', 
                      model_name=run_tag)
 
