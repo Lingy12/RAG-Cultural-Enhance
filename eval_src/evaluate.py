@@ -26,6 +26,14 @@ from model   import Model
 from rag import RAG
 from logger_config import get_logger
 
+from transformers import set_seed
+import torch
+
+def make_deterministic(seed):
+    set_seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
 logger = get_logger(__name__)
 # =  =  =  =  =  =  =  =  =  =  =  Logging Setup  =  =  =  =  =  =  =  =  =  =  =  =  = 
 # logger = logging.getLogger(__name__)
@@ -89,6 +97,7 @@ def do_model_prediction(dataset, model):
     model_predictions = []
     for i in trange(0, len(dataset.data_plain), leave=False):
         inputs  = dataset.data_plain[i]
+        make_deterministic(0)
         outputs = model.generate(inputs)
         print(outputs)
         model_predictions.extend(outputs)

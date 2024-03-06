@@ -30,5 +30,7 @@ rag_model = RAG(model_path=model_path, vector_store=vs, prompt_template=prompt, 
 
 while True:
     query = input('Enter the query:')
+    start = time.time()
     answer = rag_model.generate(query, show_ori=False, max_new_tokens=64)
+    print('Response time = ' + str(time.time() - start))
     # print('Model Response: ' + answer[0])

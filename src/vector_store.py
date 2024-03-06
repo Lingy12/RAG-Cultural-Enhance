@@ -1,4 +1,5 @@
 import os
+import shelve
 import os
 import shutil
 from tqdm import tqdm
@@ -37,8 +38,8 @@ class BaseVectorStore:
     def query(self, query):
         raise Exception('Show call implemented version.')
 
+
 class TfidfStore(BaseVectorStore):
-    
     def __init__(self, top_k, vectorizer_kwargs={}, saved_vs=None):
         self.top_k = top_k
         self.vectorizer_kwargs = vectorizer_kwargs
@@ -49,6 +50,11 @@ class TfidfStore(BaseVectorStore):
             self.vectorstore.k = self.top_k
             logger.info('Vector store loaded')
             self.is_load_from_local = True
+            self.cache_path = os.path.join('./cache', os.path.basename(os.path.normpath(saved_vs)))
+            logger.info(self.cache_path)
+            # cache the query
+            os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)  # Ensure cache directory exists
+            self.cache = shelve.open(self.cache_path, writeback=True)
         else:
             self.is_load_from_local = False
 
@@ -64,11 +70,18 @@ class TfidfStore(BaseVectorStore):
         self.vectorstore.save_local(folder_path=path)
     
     def query(self, query_str):
+        if query_str in self.cache:
+            return self.cache[query_str][:self.top_k]
+
         results = self.vectorstore.get_relevant_documents(query_str)
+        self.cache[query_str] = results
         return results[:self.top_k]
 
     def get_vocabulary(self):
         return self.vectorstore.vectorizer.vocabulary_
+
+    def close_cache(self):
+        self.cache.close()
 
 
 class EmbeddingStore(BaseVectorStore):
