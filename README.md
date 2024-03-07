@@ -65,3 +65,15 @@ python scripts/build_tf_idf_vs.py processed_data/wiki_filter_random_50k.jsonl 1 
 # a file under vector_store/ will created, the above command will create ./vector_store/wiki_filter_random_50k_1_1_None_1_50000_True.pkl
 # refer to the code for vectorizer config (scripts/build_tf_idf_vs.py)
 ```
+
+## Running Evaluation
+```bash
+# Evalute tfidf
+python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_sg_exclusive_1_1_None_1_1.0_True.pkl/ 0.2 8 "sg_eval," tfidf
+
+# Evaluate embedding
+
+python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.5 6 "sg_eval,us_eval,ph_eval" embed BAAI/bge-large-en-v1.5 # no rerank
+
+python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.4 64 "sg_eval,us_eval,ph_eval" embed BAAI/bge-large-en-v1.5 --verbose 0 --need_rerank --rerank_sample 8 # with reranking
+```
