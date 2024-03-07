@@ -1,4 +1,4 @@
-# Retrival Augmented Generation (RAG) to enhance cultural reasoning and understanding
+# Retrival Augmented Generation (RAG) to enhance cultural understanding
 
 ## Set up environment
 ```bash
