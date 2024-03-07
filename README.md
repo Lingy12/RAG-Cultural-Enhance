@@ -73,7 +73,12 @@ python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_sto
 
 # Evaluate embedding
 
-python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.5 6 "sg_eval,us_eval,ph_eval" embed BAAI/bge-large-en-v1.5 # no rerank
+python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt \
+                      ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.5 6 \
+                        "sg_eval," embed BAAI/bge-large-en-v1.5 # no rerank
 
-python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.4 64 "sg_eval,us_eval,ph_eval" embed BAAI/bge-large-en-v1.5 --verbose 0 --need_rerank --rerank_sample 8 # with reranking
+python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt \
+                      ./vector_store/wiki_filter_country_bge-large-en-v1.5 0.4 64 \
+                          "sg_eval," embed BAAI/bge-large-en-v1.5 --verbose 0 \
+                            --need_rerank --rerank_sample 8 # with reranking
 ```
