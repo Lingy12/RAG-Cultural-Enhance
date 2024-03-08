@@ -60,9 +60,10 @@ def compare_files(reference_file, rag_file):
         'correct_predictions': correct_predictions
     }
 
-# Example usage
-reference_file = sys.argv[1]
-rag_file = sys.argv[2]
-result = compare_files(reference_file, rag_file)
-print('Final result'.center(50, '='))
-print(json.dumps(result, indent=4))
+if __name__ == '__main__':
+    # Example usage
+    reference_file = sys.argv[1]
+    rag_file = sys.argv[2]
+    result = compare_files(reference_file, rag_file)
+    print('Final result'.center(50, '='))
+    print(json.dumps(result, indent=4))
