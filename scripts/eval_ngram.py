@@ -1,62 +1,50 @@
 import json
 import nltk
-import numpy as np
+import string
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+from collections import Counter
 from nltk.util import ngrams
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.cluster import KMeans
-from sklearn.model_selection import KFold
-from sklearn.metrics import silhouette_score
+from nltk.corpus import words
 
+
+
+threshold_coefficient = 0.01
 
 nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('words')
+english_words = set(words.words())
 stop_words = set(stopwords.words('english'))
 
 data = []
 num_pages = 0
-with open('./sg_data/wiki_sg_exclusive.jsonl', 'r') as file:
+with open('../sg_data/wiki_sg_exclusive.jsonl', 'r') as file:
     for line in file:
         data.append(json.loads(line))
         num_pages += 1
+file.close()
 
 texts = [item['page_content'] for item in data]
+threshold = int(threshold_coefficient * len(texts))
 
-tokenized_texts = [' '.join([word for word in word_tokenize(text.lower()) if word not in stop_words]) for text in texts]
+tokenized_texts = [[word for word in word_tokenize(text.lower()) if word in english_words and word not in stop_words and word not in string.punctuation and not word.startswith("\\u")] for text in texts]
 
-ngram_ranges = [(1, 1), (2, 2), (3, 3)]
+ngram_ranges = [1, 2, 3]
 
-k_fold = KFold(n_splits=5, shuffle=True, random_state=42)
+results = []
 
-best_ngram_range = None
-best_silhouette_score = -1
-best_kmeans_model = None
+for nrange in ngram_ranges:
+    result = {"min_n": nrange, "max_n": nrange, "max_df_coefficient": threshold_coefficient}
+    n_grams = []
+    for text in tokenized_texts:
+        n_grams.extend(list(ngrams(text, nrange)))
+    df = Counter(n_grams)
+    filtered_ngrams = [ngram for ngram, count in df.items() if count <= threshold]
+    result["ngrams"] = filtered_ngrams
+    results.append(result)
 
-for ngram_range in ngram_ranges:
-    print("Trying n-gram range:", ngram_range)
-    avg_silhouette_score = 0
-
-    for train_indices, val_indices in k_fold.split(tokenized_texts):
-        X_train, X_val = np.array(tokenized_texts)[train_indices], np.array(tokenized_texts)[val_indices]
-
-        vectorizer = CountVectorizer(ngram_range=ngram_range)
-        X_train = vectorizer.fit_transform(X_train)
-
-        kmeans = KMeans(n_clusters=int(num_pages * 0.8 * 0.05), random_state=42)
-        kmeans.fit(X_train)
-
-        X_val_transformed = vectorizer.transform(X_val)
-        labels = kmeans.predict(X_val_transformed)
-        silhouette = silhouette_score(X_val_transformed, labels)
-        avg_silhouette_score += silhouette
-
-    avg_silhouette_score /= k_fold.n_splits
-    print("Average silhouette score:", avg_silhouette_score)
-
-    if avg_silhouette_score > best_silhouette_score:
-        best_silhouette_score = avg_silhouette_score
-        best_ngram_range = ngram_range
-
-print("Best n-gram range:", best_ngram_range)
-print("Best silhouette score:", best_silhouette_score)
+with open("../sg_data/sg_ngram_eval.jsonl", "w", encoding='utf-8') as write_file:
+    for r in results:
+        json_string = json.dumps(r)
+        write_file.write(json_string + "\n")
