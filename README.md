@@ -48,12 +48,14 @@ make_deterministic(0)
 bash scripts/download_and_extract_wiki.sh
 python scripts/combine_json.py wiki_filtered True # create filtered data
 
+python scripts/combined_json_single.py data wiki_sg_exclusive "singapore," True  # this created sg exclusive data
 # processed_data/wiki_filtered.jsonl will be created
 ```
 
 ## Build Vector Store
 ```bash
-python scripts/build_tf_idf_vs.py processed_data/wiki_filter_random_50k.jsonl 1 1 None 1 50000 True
+python scripts/build_tf_idf_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 50000 True # using tf-idf
+python scripts/build_sentece_transformer_vs.py processed_data/wiki_sg_exclusive.jsonl BAAI/bge-large-en-v1.5 # using embedding
 
 # a file under vector_store/ will created, the above command will create ./vector_store/wiki_filter_random_50k_1_1_None_1_50000_True.pkl
 # refer to the code for vectorizer config (scripts/build_tf_idf_vs.py)
