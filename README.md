@@ -51,13 +51,6 @@ python scripts/combine_json.py wiki_filtered True # create filtered data
 # processed_data/wiki_filtered.jsonl will be created
 ```
 
-## Apply post processing (Optional, only for running tf-idf algorithm)
-```bash
-python scripts/sample_subset.py processed_data/wiki_filter_country.jsonl 50000 processed_data/wiki_filter_random_50k.jsonl
-
-## just an example, change '100000' to desired sample for running tf-idf
-```
-
 ## Build Vector Store
 ```bash
 python scripts/build_tf_idf_vs.py processed_data/wiki_filter_random_50k.jsonl 1 1 None 1 50000 True
