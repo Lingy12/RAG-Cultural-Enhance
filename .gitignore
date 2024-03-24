@@ -3,6 +3,7 @@ models/
 
 data/
 
+sg_data/
 __pycache__/
 
 enwiki-latest-pages-articles.xml.bz2
