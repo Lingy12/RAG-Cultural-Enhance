@@ -46,7 +46,7 @@ def consolidate_exp_folder(folder, output_path=None):
         run_name = str(Path(os.path.basename(pred)).with_suffix(''))
         
         segments = run_name.split('-')
-        
+        print(segments, len(segments))
         if len(segments) == 9:
             output_table['vector_store type'].append('tf-idf')
             vector_store_name = segments[4]  
