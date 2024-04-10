@@ -21,3 +21,5 @@ vector_store/
 processed_data/
 
 runs/
+
+.idea/

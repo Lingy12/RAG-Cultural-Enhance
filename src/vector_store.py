@@ -5,10 +5,14 @@ import shutil
 from tqdm import tqdm
 from langchain_community.vectorstores import Chroma
 from langchain_community.retrievers import TFIDFRetriever
+# from langchain_core.retrievers import BaseRetriever
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from logger_config import get_logger
+from src.logger_config import get_logger
 from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from typing import List
+from sklearn.feature_extraction.text import CountVectorizer
+import pickle
+
 
 logger = get_logger(__name__)
 
@@ -27,6 +31,25 @@ class MyTFIDFRetriever(TFIDFRetriever):
         return_docs = [(self.docs[i], results[i]) for i in results.argsort()[-self.k :][::-1]]
 
         return return_docs
+
+
+class BoWRetriever:
+    def __init__(self, docs, vectorizer_params=None, k=5):
+        self.docs = docs
+        self.k = k
+        self.vectorizer_params = vectorizer_params or {}
+        self.vectorizer = CountVectorizer(**self.vectorizer_params)
+        self.bow_matrix = self.vectorizer.fit_transform(self.docs)
+
+
+    def get_relevant_documents(self, query):
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        query_vec = self.vectorizer.transform([query])
+        results = cosine_similarity(self.bow_matrix, query_vec).reshape(-1,)
+        return_docs = [(self.docs[i], results[i]) for i in results.argsort()[-self.k:][::-1]]
+        return return_docs
+
 
 class BaseVectorStore:
     def build_vectorstore(self, docs):
@@ -87,6 +110,58 @@ class TfidfStore(BaseVectorStore):
 
     def close_cache(self):
         self.cache.close()
+
+
+class BoWStore(BaseVectorStore):
+    def __init__(self, top_k, vectorizer_kwargs={}, saved_vs=None):
+        self.top_k = top_k
+        self.vectorizer_kwargs = vectorizer_kwargs
+        if saved_vs:
+            self.load(saved_vs)
+            logger.info('Vector store loaded from ' + saved_vs)
+        else:
+            self.vectorstore = None
+
+    def build_vectorstore(self, docs):
+        if self.vectorstore is not None:
+            logger.warning('Vector store already exists. Use load() to load an existing store.')
+            return
+        logger.info(f'Building vector stores with {len(docs)} documents')
+        self.vectorstore = BoWRetriever(docs, self.vectorizer_kwargs, self.top_k)
+
+    def query(self, query_str):
+        if not self.vectorstore:
+            logger.error('Vector store not initialized. Cannot execute query.')
+            return []
+
+        logger.info('Querying vector store for: ' + query_str)
+        results = self.vectorstore.get_relevant_documents(query_str)
+        return results[:self.top_k]
+
+    def export(self, path):
+        if not self.vectorstore:
+            logger.error('No vector store to save.')
+            return
+        # if not os.path.exists(path):
+        #     os.makedirs(path)
+        with open(path, 'wb') as f:
+            pickle.dump({
+                'docs': self.vectorstore.docs,
+                'vectorizer': self.vectorstore.vectorizer,
+                'bow_matrix': self.vectorstore.bow_matrix,
+                'k': self.vectorstore.k,
+            }, f)
+        logger.info(f'Vector store saved to {path}')
+
+    def load(self, path):
+        if not os.path.exists(path):
+            logger.error('Save path does not exist.')
+            return
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+            self.vectorstore = BoWRetriever(data['docs'], self.vectorizer_kwargs, data['k'])
+            self.vectorstore.vectorizer = data['vectorizer']
+            self.vectorstore.bow_matrix = data['bow_matrix']
 
 
 class EmbeddingStore(BaseVectorStore):
