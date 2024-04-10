@@ -7,7 +7,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.retrievers import TFIDFRetriever
 # from langchain_core.retrievers import BaseRetriever
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from src.logger_config import get_logger
+from logger_config import get_logger
 from langchain_core.callbacks import CallbackManagerForRetrieverRun
 from typing import List
 from sklearn.feature_extraction.text import CountVectorizer
