@@ -1,7 +1,7 @@
 import torch
 import fire
 from rag import RAG
-from vector_store import TfidfStore, EmbeddingStore
+from vector_store import TfidfStore, EmbeddingStore, BoWStore
 from langchain_core.documents import Document
 from evaluate import eval_rag
 import os
@@ -55,6 +55,8 @@ def evaluate(model_path, prompt, vector_store, retrieval_threshold, top_k, eval_
                 vs = EmbeddingStore(top_k=top_k, saved_vs=vector_store, model_name=embed_name) 
             elif eval_mode == 'tfidf':
                 vs = TfidfStore(top_k=top_k, saved_vs=vector_store)
+            elif eval_mode == 'bow':
+                vs = BoWStore(top_k=top_k, saved_vs=vector_store)
             else:
                 raise Exception("Not a valid Eval mode. Choose ['embed', 'tfidf']")
             logger.info('Vector store loaded.')
