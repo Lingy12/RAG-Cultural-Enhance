@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from vector_store import TfidfStore
+from vector_store import BoWStore
 import time
 import fire
 from logger_config import get_logger
@@ -39,7 +39,7 @@ def build_bow(json_file, params_file, max_features):
                              }
         logger.info("Vectorizer config: ")
         logger.info(vectorizer_config)
-        tf_idf_store = TfidfStore(top_k=20, vectorizer_kwargs=vectorizer_config)
+        tf_idf_store = BoWStore(top_k=20, vectorizer_kwargs=vectorizer_config)
         logger.info('Vector store initialized.')
 
         start = time.time()
