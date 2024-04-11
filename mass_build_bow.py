@@ -5,7 +5,7 @@ import time
 import fire
 from logger_config import get_logger
 import json
-from scripts.build_tf_idf_vs import load_docs_from_jsonl, to_doc
+from scripts.build_bow_vs import load_docs_from_jsonl, to_doc
 
 logger = get_logger(__name__)
 def build_bow(json_file, params_file, max_features):
@@ -43,12 +43,12 @@ def build_bow(json_file, params_file, max_features):
         logger.info('Vector store initialized.')
 
         start = time.time()
-        logger.info('Building Tf-IDF vector store.')
+        logger.info('Building BOW vector store.')
         tf_idf_store.build_vectorstore(data)
         logger.info('Built vector store.')
         runtime = time.time() - start
         logger.info('Built time: {}s'.format(runtime))
-        logger.info('Number of vocabulary: ' + str(len(tf_idf_store.get_vocabulary())))
+        # logger.info('Number of vocabulary: ' + str(len(tf_idf_store.get_vocabulary())))
         # logger.info(tf_idf_store.get_vocabulary())
         output_name = str(Path(os.path.basename(json_file)).with_suffix('')) + '_' + '_'.join([str(n_min), str(n_max), str(max_features), str(min_df), str(max_df)]) + '.pkl'
         tf_idf_store.export(os.path.join('./vector_store', output_name))
