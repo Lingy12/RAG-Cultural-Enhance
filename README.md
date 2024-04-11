@@ -54,10 +54,13 @@ python scripts/combined_json_single.py data wiki_sg_exclusive "singapore," True 
 
 ## Build Vector Store
 ```bash
-python scripts/build_tf_idf_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 50000 True # using tf-idf
+# Build tf-idf vector store
+python scripts/build_tf_idf_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 50000 True
 
+# Build Bag-of-words vector store
 python scripts/build_bow_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 0.001 # using bag of words
 
+# Build embedding vector store
 python scripts/build_sentece_transformer_vs.py processed_data/wiki_sg_exclusive.jsonl BAAI/bge-large-en-v1.5 # using embedding
 
 # a file under vector_store/ will created, the above command will create ./vector_store/wiki_filter_random_50k_1_1_None_1_50000_True.pkl
