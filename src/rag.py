@@ -67,7 +67,10 @@ class RAG:
             logger.info('Reranking finished.')
         # print(filtered_retrival)
         if len(filtered_retrival) > 0:
-            retrival_string = '\n'.join(list(map(lambda x: x[0].page_content, filtered_retrival)))
+            if isinstance(filtered_retrival[0][0], str):
+                retrival_string = '\n'.join(list(map(lambda x: x[0], filtered_retrival)))
+            else:
+                retrival_string = '\n'.join(list(map(lambda x: x[0].page_content, filtered_retrival)))
         else:
             retrival_string = ''
             
