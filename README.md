@@ -55,6 +55,9 @@ python scripts/combined_json_single.py data wiki_sg_exclusive "singapore," True 
 ## Build Vector Store
 ```bash
 python scripts/build_tf_idf_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 50000 True # using tf-idf
+
+python scripts/build_bow_vs.py processed_data/wiki_sg_exclusive.jsonl 1 1 None 1 0.001 # using bag of words
+
 python scripts/build_sentece_transformer_vs.py processed_data/wiki_sg_exclusive.jsonl BAAI/bge-large-en-v1.5 # using embedding
 
 # a file under vector_store/ will created, the above command will create ./vector_store/wiki_filter_random_50k_1_1_None_1_50000_True.pkl
@@ -65,6 +68,9 @@ python scripts/build_sentece_transformer_vs.py processed_data/wiki_sg_exclusive.
 ```bash
 # Evalute tfidf
 python src/evaluator.py ./models/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_sg_exclusive_1_1_None_1_1.0_True.pkl/ 0.2 8 "sg_eval," tfidf
+
+# evaluate bag-of-words
+python src/evaluator.py /home/shared_LLMs/gemma-2b-it prompt/prompt_eval.txt ./vector_store/wiki_sg_exclusive_1_1_None_1_0.001_bow.pkl  1 8 "sg_eval," bow
 
 # Evaluate embedding
 
