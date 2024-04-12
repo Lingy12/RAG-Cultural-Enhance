@@ -3,6 +3,8 @@ models/
 
 data/
 
+report_plot.ipynb
+
 sg_data/
 __pycache__/
 
