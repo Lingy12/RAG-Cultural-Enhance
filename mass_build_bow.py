@@ -50,7 +50,7 @@ def build_bow(json_file, params_file, max_features):
         logger.info('Built time: {}s'.format(runtime))
         # logger.info('Number of vocabulary: ' + str(len(tf_idf_store.get_vocabulary())))
         # logger.info(tf_idf_store.get_vocabulary())
-        output_name = str(Path(os.path.basename(json_file)).with_suffix('')) + '_' + '_'.join([str(n_min), str(n_max), str(max_features), str(min_df), str(max_df)]) + '.pkl'
+        output_name = str(Path(os.path.basename(json_file)).with_suffix('')) + '_' + '_'.join([str(n_min), str(n_max), str(max_features), str(min_df), str(max_df)]) + '_bow.pkl'
         tf_idf_store.export(os.path.join('./vector_store', output_name))
         logger.info('Saved vector store: ' + output_name)
 
